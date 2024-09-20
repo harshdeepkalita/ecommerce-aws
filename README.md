@@ -2,24 +2,32 @@
 
 ## Ingestion Pipeline
 
-I have developed a Python script that transforms data from a CSV dataset into JSON format. This JSON data is then sent as the HTTP POST message body to an API Gateway created in AWS. Upon receiving the data, the API Gateway triggers a Lambda function named `writeKinesis`, which subsequently sends the data to a Kinesis stream named `APIData`.
+This Python script transforms data from a CSV dataset into JSON format, which is then sent as the HTTP POST message body to an AWS API Gateway. The API Gateway triggers a Lambda function called ⁠ `writeKinesis` ⁠, which forwards the data to a Kinesis stream named ⁠ `APIData` ⁠.
+
 
 ## Kinesis Stream to S3 Pipeline
 
-The Lambda function, `write-kinesis-to-s3` processes records from a Kinesis stream which are provided to it in base64-encoded format. It decodes the base64-encoded data, concatenates the records, and stores them as a text file in an S3 bucket. The file is named with a timestamp for uniqueness.
+The Lambda function ⁠`write-kinesis-to-s3` ⁠ processes records from the Kinesis stream. These records are base64-encoded, and the function decodes them, concatenates the records, and stores them as a text file in an S3 bucket `s3-bucket-de`, naming the file with a unique timestamp.
+
 
 ## DynamoDB Pipeline 
 
-The Lambda function `write-to-dynamodb` processes data from Kinesis streams to update two DynamoDB tables: *customers* and *invoices*. The function first decodes the base64-encoded data from the stream and converts it into a dictionary. For each record, it updates the ⁠ customers ⁠ table using the ⁠CustomerID ⁠ as the primary key, adding information related to a specific ⁠ InvoiceNo ⁠. It then updates the ⁠ invoices ⁠ table using ⁠InvoiceNo ⁠ as the key and stores stock details. After processing all records, the function returns a message confirming the number of records processed successfully.
+The Lambda function ⁠`write-to-dynamodb` ⁠ processes data from the Kinesis stream to update two DynamoDB tables: *customers* and *invoices*. It decodes the base64-encoded data into a dictionary. For each record, the function updates the customers table using ⁠ CustomerID ⁠ as the primary key and adds information related to the specific ⁠InvoiceNo ⁠. Then, it updates the invoices table with stock details using ⁠InvoiceNo ⁠ as the key. After processing, the function confirms the number of successfully processed records.
+
 
 ## Redshift Visualization Pipeline
 
-This pipeline processes real-time data from **Kinesis Stream** `APIData` to an **Amazon Redshift** table `firehose_transactions` for analysis and visualization.
+This pipeline transfers real-time data from the **Kinesis Stream** ⁠ `APIData` ⁠ to an **Amazon Redshift** table ⁠ `firehose_transactions`⁠ for analysis and visualization.
 
-1. **Kinesis Stream**: Data is ingested from a Kinesis stream.
-2. **Kinesis Firehose**: Manages and buffers the data, then writes it to **S3**.
-3. **S3 Storage**: Temporarily stores the processed data.
-4. **Redshift Table**: Data is copied from S3 to a Redshift table for storage.
-5. **Analysis and Visualization**: Data in Redshift can be queried and visualized using tools like **LookerStudio**.
+1.⁠ ⁠**Kinesis Stream**: Data is ingested from the Kinesis stream.
+
+2.⁠ ⁠**Kinesis Firehose**: Manages and buffers the data, then writes it to an intermediate S3 bucket `fire-hose-redshift`.
+
+3.⁠ ⁠**S3 Storage**: Temporarily stores the data.
+
+4.⁠ ⁠**Redshift Table**: The data is copied from S3 into a Redshift table.
+
+5.⁠ ⁠**Analysis and Visualization**: The data in Redshift can be queried and visualized using tools like **LookerStudio*.
+
 
 This pipeline automates real-time data ingestion into Redshift for easy analytics and reporting.
