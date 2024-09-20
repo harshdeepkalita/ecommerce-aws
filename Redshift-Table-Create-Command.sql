@@ -1,5 +1,5 @@
 create table firehosetransactions(
-	InvoiceNo int not null,
+	InvoiceNo varchar(200) not null,
 	StockCode varchar(200) not null,
 	Description varchar(200) not null,
 	Quantity int not null,	
