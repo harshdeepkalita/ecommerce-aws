@@ -1,5 +1,8 @@
 # Ecommerce Data Pipeline
 
+![Image 20-09-2024 at 19 46](https://github.com/user-attachments/assets/832cdc68-b1b6-4ed7-a152-e2415bb457e1)
+
+
 ## Ingestion Pipeline
 
 This Python script transforms data from a CSV dataset into JSON format, which is then sent as the HTTP POST message body to an AWS API Gateway. The API Gateway triggers a Lambda function called ⁠ `writeKinesis` ⁠, which forwards the data to a Kinesis stream named ⁠ `APIData` ⁠.
